@@ -1,0 +1,117 @@
+%refs
+{
+    font-family: sans-serif;
+    font-size: 20px;
+    font-weight: bolder;
+    border : 1px ridge;
+    padding:1%;
+    margin : 10px;
+    color:white;
+}
+
+.epl
+{
+    @extend %refs;
+    background-color:darkgray;
+}
+
+.laliga
+{
+    @extend %refs;
+    background-color:dimgray;
+}
+
+.bundesliga
+{
+    @extend %refs;
+    background-color:gray;
+}
+
+div
+{
+    font-size: 18px;
+    a
+    {
+        color:blue;
+    }
+    span
+    {
+        h4
+        {
+            color:white;
+            font-weight: bold;
+        }
+    }
+}
+
+a
+{
+    color:white;
+}
+
+#main
+{
+    background-image : url(http://hdqwalls.com/wallpapers/nike-black-play-football-ev.jpg);
+    height : 600px;
+    margin-left: 0.5%;
+    margin-right: 0.5%;
+    background-size: cover;
+}
+
+.headers
+{
+    font-family: 'Times New Roman', Times, serif;
+    color:lemonchiffon;
+    font-weight: bolder;
+}
+
+.row > div
+{
+    background-color:lemonchiffon;
+    padding:20px;
+    margin:2%;
+    border:2px solid black;
+}
+
+.players
+{
+    background-color:transparent;
+    margin:25px;
+    border-bottom-style: ridge;
+    border-radius: 20px;
+}
+
+.red
+{
+    color:red;
+}
+
+.blue
+{
+    color:blue;
+}
+
+.light
+{
+    color:rgb(13, 178, 243);
+}
+
+.dark
+{
+    color:darkblue;
+}
+
+.maroon
+{
+    color : maroon;
+}
+
+.purple
+{
+    color: purple;
+}
+
+.yellow
+{
+    color:yellow;
+}
