@@ -14,17 +14,17 @@
         
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
     </head>
-    <body style="background-size:cover;background-image: url('https://cdn-images-1.medium.com/max/2000/1*YLlZ96J3p8GFkIh1USVMzg.jpeg')">
+    <body style="background-size:cover;background-image: url('/static/bg.jpg')">
         <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
             <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
-                        <a class="nav-link" href="#"></a>
+                        <a class="nav-link" href="{{ url_for('main') }}">Home</a>
                     </li>
                 </ul>
             </div>
             <div class="mx-auto order-0">
-                <a class="navbar-brand mx-auto" href="#">Readers</a>
+                <a class="navbar-brand mx-auto" href="{{ url_for('main') }}">Readers</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -38,6 +38,9 @@
             </div>
         </nav>
         <br><br>
+        <div class="container" align="center" style="background-color: lemonchiffon">
+            {% block title %}{% endblock %}
+        </div>
         {% block main %}
         {% endblock %}
     </body>

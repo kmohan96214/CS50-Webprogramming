@@ -9,6 +9,14 @@ from passlib.apps import custom_app_context as pwd_context
 
 app = Flask(__name__)
 
+if app.config["DEBUG"]:
+    @app.after_request
+    def after_request(response):
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        response.headers["Expires"] = 0
+        response.headers["Pragma"] = "no-cache"
+        return response
+
 # Check for environment variable
 if not os.getenv("DATABASE_URL"):
     raise RuntimeError("DATABASE_URL is not set")
@@ -82,11 +90,38 @@ def register():
 @login_required
 def main():
     if request.method=='POST':
-        pass
+        if not request.form.get('search'):
+            return apology('Enter query')
+
+        type = request.form.get('searchBy')
+        query = request.form.get('search').lower()
+
+        return redirect( url_for('searchResults',query=query,type=type))
     else:
         return render_template("main.html")
 
-        
+@app.route('/searchResults')
+@login_required
+def searchResults():
+    query = request.args.get('query')
+    type = request.args.get('type')
+
+    if type=="book":
+        rows = db.execute("select * from books where lower(title) like :query" , {'query': '%'+query+'%'}).fetchall()
+    elif type=='author':
+        rows = db.execute('select * from books where lower(author) like :query',{'query':'%'+query+'%'}).fetachall()
+    else:
+        rows = db.execute('select * from books where isbn = :query' , {'query':query}).fetchall()
+    
+    return render_template('searchResults.html',rows=rows)
+
+@app.route("/bookpage")
+@login_required
+def bookpage():
+    name = request.args.get('name')
+    row = db.execute('select * from books where title = :title',{'title':name}).fetchone()
+    return render_template('bookpage.html',row=row)
+
 @app.context_processor
 def override_url_for():
     return dict(url_for=dated_url_for)

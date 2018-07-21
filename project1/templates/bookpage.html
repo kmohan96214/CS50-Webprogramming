@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block title %}
+<header>
+    <span class="title"><h1>{{row.title}}</h1></span>
+</header>
+{% endblock %}
+{% block main %}
+<div class="container" style="background-color:lemonchiffon">
+    <header>
+    <span class="paragraph"><b>Title:       </b>{{ row.title }}<br>
+    <b>Author:      </b>{{ row.author }}<br>
+    <b>ISBN:        </b>{{ row.isbn }}<br>
+    <b>Publication year:    </b>{{ row.year }}<br></span>
+    </header>
+</div>
+{% endblock %}

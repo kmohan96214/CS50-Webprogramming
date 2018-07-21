@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block main %}
+<div class="container">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <div class="container">
+        <form class="search" align="center" action="{{ url_for('main') }}" method='POST'>
+            <select name="searchBy" style="height:46px;width:10%;">
+                <option value="book" selected>Book</option>
+                <option value="author">Author</option>
+                <option value="isbn">ISBN</option>
+            </select>      
+            <input type="text" placeholder="Search.." name="search">
+            <button type="submit"><i class="fa fa-search"></i></button>
+        </form>
+        </div>
+</div>
+<div class="container">
+    {% if rows %}
+        {% for name in rows %}
+            <div class="card" style="padding:2%;margin:3%">
+                <div class="card-body" style="align-content: center;">
+                    <h4><a href="{{ url_for('bookpage',name= name.title) }}">{{ name.title }} </a></h4>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="card">
+            <div class="card-body">
+                <h1>no results found</h1>
+            </div>
+        </div>
+    {% endif %}
+</div>>
+{% endblock %}

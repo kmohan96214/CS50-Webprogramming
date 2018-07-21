@@ -3,7 +3,7 @@
 <div class="container">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <div class="container">
-    <form class="search" align="center" action="#" method='POST'>
+    <form class="search" align="center" action="{{ url_for('main') }}" method='POST'>
         <select name="searchBy" style="height:46px;width:10%;">
             <option value="book" selected>Book</option>
             <option value="author">Author</option>
@@ -14,4 +14,6 @@
     </form>
     </div>
 </div>
+{% endblock %}
+{% block searches %}
 {% endblock %}
