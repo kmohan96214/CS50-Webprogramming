@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width; initial-scale=1.0;" />
+        <link href="{{url_for('static',filename='reset.css')}}" type="text/css" rel="stylesheet" />
+        <link href="{{url_for('static',filename='home.css')}}" type="text/css" rel="stylesheet" />
+        <link href="{{url_for('static',filename='input.css')}}" type="text/css" rel="stylesheet" />
+    </head>
+    <body>
+        <header>
+			<div id="wrapper" style="overflow:hidden;">
+				
+				<div class="login">
+          <form action="{{ url_for('login') }}" method="POST">
+					  <input type="text" name="uname" placeholder="Email" required/>
+					  <input type="password" name="pword" placeholder="Password" required/>
+            <input type="submit" value="Login" />
+          </form>
+				</div>
+			</div>
+			<div id="wrapper" class="big" style="max-width:600px;">
+				<span class="title">Welcome to Readers</span>
+				<div class="paragraph"></div>
+			</div>
+        </header>
+        <div class="form" style="max-width:400px;">
+        <form action="{{ url_for('register') }}" method="POST">
+				<span class="title">sign up</span>
+                <div class="group">
+                    <input type="text" name="uname" required>
+                    <span class="highlight"></span>
+                    <span class="bar"></span>
+                    <label>Full Name</label>
+                </div>
+				
+                <div class="group">      
+                  <input type="password" name="pword" required>
+                  <span class="highlight"></span>
+                  <span class="bar"></span>
+                  <label>Password</label>
+                </div>
+				
+                <div class="group">      
+                  <input type="password" name="retype" required>
+                  <span class="highlight"></span>
+                  <span class="bar"></span>
+                  <label>Retype Password</label>
+                </div>
+				
+        <input type="submit" value="Sign Up" />
+    </form>
+		</div>
+		<footer>
+		</footer>
+    </body>
+</html>
