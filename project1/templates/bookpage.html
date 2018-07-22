@@ -10,7 +10,47 @@
     <span class="paragraph"><b>Title:       </b>{{ row.title }}<br>
     <b>Author:      </b>{{ row.author }}<br>
     <b>ISBN:        </b>{{ row.isbn }}<br>
-    <b>Publication year:    </b>{{ row.year }}<br></span>
+    <b>Publication year:    </b>{{ row.year }}<br><br>
+    <b><i>Goodreads rating:</i></b><br><br>
+    <b>Number of ratings:   </b>{{ gr.work_ratings_count }}<br>
+    <b>Avearge Rating:   </b>{{ gr.average_rating }}/5<br></span>
     </header>
+</div>
+<div class="container">
+{% if ureviews %}
+    <div class="reviews">
+        <header>
+            <span class="title" style="color:white;"><b>User reviews:</b></span><br>     
+        </header>
+        {% for review in ureviews %}
+            <div class="card" align:'center' style="margin:0.25%;">
+                <b>{{ review.review }}</b><br>
+                <b>Rating: {{ review.rating }}/5</b><br>
+                <b>by userid: {{ review.userid }}</b>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+</div>
+<div class="container" style="margin:4%;">
+    <form name="f" action="{{url_for( 'submitReview',isbn=row.isbn ) }}" method="POST">
+        <br>
+        <textarea align="center" rows="4" cols="155" name="review" style="margin-left:5%;">
+        </textarea><br>
+        <div class="stars">
+    <input class="star star-5" id="star-5" type="radio" value=5 name="star"/>
+    <label class="star star-5" for="star-5"></label>
+    <input class="star star-4" id="star-4" type="radio" value=4 name="star"/>
+    <label class="star star-4" for="star-4"></label>
+    <input class="star star-3" id="star-3" type="radio" value=3 name="star"/>
+    <label class="star star-3" for="star-3"></label>
+    <input class="star star-2" id="star-2" type="radio" value=2 name="star"/>
+    <label class="star star-2" for="star-2"></label>
+    <input class="star star-1" id="star-1" type="radio" value=1 name="star"/>
+    <label class="star star-1" for="star-1"></label>
+        <br>
+        </div>
+        <input type="submit" value="Submit" style="background:#0374D8"/>
+    </form>
 </div>
 {% endblock %}

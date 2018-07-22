@@ -6,9 +6,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from helpers import login_required,apology
 from passlib.apps import custom_app_context as pwd_context
-
+import requests
 app = Flask(__name__)
 
+#preventing caching
 if app.config["DEBUG"]:
     @app.after_request
     def after_request(response):
@@ -30,6 +31,7 @@ Session(app)
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
+#login/signup page
 @app.route("/")
 def index():
     session.clear()
@@ -38,20 +40,23 @@ def index():
 @app.route("/")
 @login_required
 def logout():
+    #log user out by clearing session
     session.clear()
     return redirect(url_for('index'))
 
 @app.route("/login",methods=['GET','POST'])
 def login():
-    
+    #clear if there is any session active
     session.clear()
 
     if request.method == 'POST':
         row = db.execute("select * from users where uname = :uname",{"uname" : request.form.get('uname')}).fetchone()
         
+        #store password by hashing
         if (not row) or (not pwd_context.verify(request.form.get("pword"), row["pword"])):
             return apology("Invalid username/password")
         
+        #store user session in session dictionary
         session["userid"] = row["userid"]
         
         return redirect(url_for("main"))
@@ -60,28 +65,31 @@ def login():
 
 @app.route("/register",methods=["POST"])
 def register():
-    
+    #clear if there is any session active
     session.clear()
     
     if request.method=="POST":
         uname = request.form.get('uname')
         
         row = db.execute("select * from users where uname= :uname" , {"uname" : uname}).fetchone()
+        #if user already exists
         if row:
             return apology("user already exists")
         
         p = request.form.get('pword')
         retype = request.form.get('retype')
+
         if (p != retype):
             return apology("password didnot match")
             
         h = pwd_context.hash(p)
         
         db.execute("insert into users (uname,pword) values(:uname,:pword)",{"uname" : uname,"pword" :h})
+        #commit database once inserted new user
         db.commit()
         
         row = db.execute("select * from users where uname = :uname",{ "uname" : uname}).fetchone()
-        
+        #log the user in
         session["userid"] = row["userid"]
         
         return redirect(url_for("main"))
@@ -90,9 +98,11 @@ def register():
 @login_required
 def main():
     if request.method=='POST':
+        #verify is user has not entered anything
         if not request.form.get('search'):
             return apology('Enter query')
 
+        #search for title/author/isbn
         type = request.form.get('searchBy')
         query = request.form.get('search').lower()
 
@@ -105,11 +115,11 @@ def main():
 def searchResults():
     query = request.args.get('query')
     type = request.args.get('type')
-
+    #search for results
     if type=="book":
         rows = db.execute("select * from books where lower(title) like :query" , {'query': '%'+query+'%'}).fetchall()
     elif type=='author':
-        rows = db.execute('select * from books where lower(author) like :query',{'query':'%'+query+'%'}).fetachall()
+        rows = db.execute('select * from books where lower(author) like :query',{'query':'%'+query+'%'}).fetchall()
     else:
         rows = db.execute('select * from books where isbn = :query' , {'query':query}).fetchall()
     
@@ -118,9 +128,35 @@ def searchResults():
 @app.route("/bookpage")
 @login_required
 def bookpage():
-    name = request.args.get('name')
-    row = db.execute('select * from books where title = :title',{'title':name}).fetchone()
-    return render_template('bookpage.html',row=row)
+    #generates book page for every unique book
+    if request.args:
+        name = request.args.get('name')
+        row = db.execute('select * from books where title = :title',{'title':name}).fetchone()
+        key = 'yBR03oJB3s1ypyNtFr08TA'
+        res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": key, "isbns": row['isbn']})
+        rows = db.execute('select * from reviews where isbn = :isbn',{'isbn':row['isbn']}).fetchall()
+
+        return render_template('bookpage.html',row=row,gr = res.json()['books'][0],ureviews=rows)
+    else:
+        return apology('enter bookname')
+
+@app.route('/submitReview',methods=['POST'])
+@login_required
+def submitReview():
+    review = request.form.get('review')
+    rating = request.form.get('star',0)
+    isbn = request.args.get('isbn',None)
+    row = db.execute('select * from reviews where userid = :userid and isbn = :isbn' ,
+                    {'userid':session['userid'],'isbn':isbn}).fetchone()
+    bname = db.execute('select * from books where isbn = :isbn',{'isbn':isbn}).fetchone()['title']
+    if row:
+        return apology('Already submitted a review on this book')
+    else:
+        db.execute('insert into reviews (userid,isbn,review,rating) VALUES(:userid,:isbn,:review,:rating)',
+                  {'userid':session['userid'] ,'isbn':isbn,'review':review,'rating':rating})
+        db.commit()
+
+        return redirect(url_for('bookpage',name=bname))
 
 @app.context_processor
 def override_url_for():

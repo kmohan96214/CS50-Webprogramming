@@ -20,7 +20,8 @@
         {% for name in rows %}
             <div class="card" style="padding:2%;margin:3%">
                 <div class="card-body" style="align-content: center;">
-                    <h4><a href="{{ url_for('bookpage',name= name.title) }}">{{ name.title }} </a></h4>
+                    <h5><a href="{{ url_for('bookpage',name= name.title) }}">{{ name.title }} </a></h5><br>
+                    <h5><b>By:</b>{{ name.author }}</h5>
                 </div>
             </div>
         {% endfor %}
