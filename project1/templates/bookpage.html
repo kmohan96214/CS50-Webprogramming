@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block title %}
 <header>
-    <span class="title"><h1>{{row.title}}</h1></span>
+    <span class="title" style="color:maroon"><h1><b><i>{{row.title}}</i></b></h1></span>
 </header>
 {% endblock %}
 {% block main %}
@@ -33,6 +33,7 @@
 {% endif %}
 </div>
 <div class="container" style="margin:4%;">
+    <header><span class="title" style="color:black;font-weight:300px;margin-left:5%;background:lemonchiffon;"><b>Submit review:</b></span></header>
     <form name="f" action="{{url_for( 'submitReview',isbn=row.isbn ) }}" method="POST">
         <br>
         <textarea align="center" rows="4" cols="155" name="review" style="margin-left:5%;">
@@ -50,7 +51,7 @@
     <label class="star star-1" for="star-1"></label>
         <br>
         </div>
-        <input type="submit" value="Submit" style="background:#0374D8"/>
+        <input type="submit" value="Submit" style="display:block;margin-left:5%;margin-top:0.5%;"/>
     </form>
 </div>
 {% endblock %}

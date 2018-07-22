@@ -132,7 +132,7 @@ def bookpage():
     if request.args:
         name = request.args.get('name')
         row = db.execute('select * from books where title = :title',{'title':name}).fetchone()
-        key = 'yBR03oJB3s1ypyNtFr08TA'
+        key = os.getenv('key')
         res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": key, "isbns": row['isbn']})
         rows = db.execute('select * from reviews where isbn = :isbn',{'isbn':row['isbn']}).fetchall()
 
