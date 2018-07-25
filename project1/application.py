@@ -166,6 +166,9 @@ def api(isbn):
     isbn = str(isbn)
     print(isbn)
     row = db.execute('select * from books where isbn = :isbn' ,{'isbn':isbn}).fetchone()
+    if res is None or row is None:
+        return jsonify({'error' : 'isbn not valid'}),422
+
     return jsonify({
             "title": row['title'],    
             "author": row['author'],  
