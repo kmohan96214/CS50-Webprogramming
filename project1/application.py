@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, session,render_template,url_for,request,redirect
+from flask import Flask, session,render_template,url_for,request,redirect,jsonify
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -134,7 +134,7 @@ def bookpage():
         row = db.execute('select * from books where title = :title',{'title':name}).fetchone()
         key = os.getenv('key')
         res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": key, "isbns": row['isbn']})
-        rows = db.execute('select * from reviews where isbn = :isbn',{'isbn':row['isbn']}).fetchall()
+        rows = db.execute('select * from reviews join users on reviews.userid = users.userid where isbn = :isbn',{'isbn':row['isbn']}).fetchall()
 
         return render_template('bookpage.html',row=row,gr = res.json()['books'][0],ureviews=rows)
     else:
@@ -157,6 +157,23 @@ def submitReview():
         db.commit()
 
         return redirect(url_for('bookpage',name=bname))
+
+@app.route('/api/<string:isbn>')
+def api(isbn):
+    key = os.getenv("key")
+    res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key":key, "isbns": "9781632168146"})
+    res = res.json()
+    isbn = str(isbn)
+    print(isbn)
+    row = db.execute('select * from books where isbn = :isbn' ,{'isbn':isbn}).fetchone()
+    return jsonify({
+            "title": row['title'],    
+            "author": row['author'],  
+            "year" : row['year'],     
+            "isbn" : row['isbn'],     
+            "review_count" : res['books'][0]['work_ratings_count'],
+            "average_score": res['books'][0]['average_rating']
+        })
 
 @app.context_processor
 def override_url_for():
