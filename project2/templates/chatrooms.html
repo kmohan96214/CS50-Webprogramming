@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script>
+
+        document.addEventListener('DOMContentLoaded' , () => {
+            if(!localStorage.getItem('displayname'))
+                window.location = "{{ url_for('index') }}";
+            
+            let x = localStorage.getItem('displayname');
+            document.querySelector('#username').innerHTML = "<b>" + x.toUpperCase() + "</b>";
+
+            document.querySelector('#logout').addEventListener("click", () => {
+                localStorage.clear();
+                window.location = "{{ url_for('index') }}";
+            });
+
+            const req = new XMLHttpRequest();
+            req.open('GET','/channels');
+
+            req.onload = () =>{
+                const data = JSON.parse(req.responseText);
+                for(var i in data)
+                {
+                    //document.querySelector("#channels").innerHTML += (i + "\n");
+                    var ul = document.querySelector("#channel");
+                    var li = document.createElement("li");
+                    li.setAttribute('class','list-group-item list-group-item-dark');
+                    li.appendChild(document.createTextNode(i));
+                    ul.appendChild(li);
+                }
+            }
+            
+            req.send()
+            return false;
+        });
+
+
+        function createChannel()
+        {
+            const req = new XMLHttpRequest();
+            const name = document.querySelector('#name').value;
+            req.open('POST','/create');
+
+            req.onload = () => {
+                var ul = document.querySelector("#channel");
+                var li = document.createElement("li");
+                const data = JSON.parse(req.responseText);
+                li.setAttribute('class','list-group-item list-group-item-dark');
+                li.appendChild(document.createTextNode(name));
+                ul.appendChild(li);
+                //document.querySelector("#channels").innerHTML += (name + "\n");
+            }
+
+            const data = new FormData();
+            data.append('name',name);
+
+            req.send(data);
+            return false;
+        }
+        </script>
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    </head>
+    <body>
+    <div class='navbar navbar-dark bg-dark' style='border:1%;padding:1%'>
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" id="username" href="#"></a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+                    <li><span class="glyphicon glyphicon-log-in"></span><button class='btn btn-light' id='logout'>Logout</button></li>
+            </ul>
+        </div>
+    </div><br><br>
+    <div class='container' id="formc">
+        <form class='form-group'>
+            <label for="example">Channel</label>
+            <input type="text" class='form-control' id="name" name="chn" placeholder="channel name"/>
+            <small id="namehelp" class="form-text text-muted">Name of your channel.</small><br>
+            <label for="example">Purpose</label>
+            <input type="text" class='form-control' id="topic" name="tpc" placeholder="purpose"/>
+            <small id="emailHelp" class="form-text text-muted">Purpose of your channel.</small><br>
+            <input type="button" class='btn btn-primary' value="Create" id="createchannel" onclick="createChannel()"/><br>
+        </form>
+    </div>
+    <div id="channels" class='container'>
+        <h3>Join Existing Channels:</h3><br>
+        <ul id="channel" class='list-group'>
+        </ul>
+    </div>
+    </body>
+</html>
