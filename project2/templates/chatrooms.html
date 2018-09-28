@@ -15,18 +15,19 @@
                 window.location = "{{ url_for('index') }}";
             });
 
+            //display all existing channels 
             const req = new XMLHttpRequest();
-            req.open('GET','/channels');
+            req.open('GET','/channelsList');
 
             req.onload = () =>{
+                //iterate over the list of channels
                 const data = JSON.parse(req.responseText);
                 for(var i in data)
                 {
-                    //document.querySelector("#channels").innerHTML += (i + "\n");
                     var ul = document.querySelector("#channel");
                     var li = document.createElement("li");
                     li.setAttribute('class','list-group-item list-group-item-dark');
-                    li.appendChild(document.createTextNode(i));
+                    li.innerHTML = "<a href='#'>"+ i +"</a>";
                     ul.appendChild(li);
                 }
             }
@@ -40,21 +41,23 @@
         {
             const req = new XMLHttpRequest();
             const name = document.querySelector('#name').value;
+            const purpose = document.querySelector('#topic').value;
+            //create a new channel
             req.open('POST','/create');
 
             req.onload = () => {
+                //add the new room to the list
                 var ul = document.querySelector("#channel");
                 var li = document.createElement("li");
                 const data = JSON.parse(req.responseText);
                 li.setAttribute('class','list-group-item list-group-item-dark');
-                li.appendChild(document.createTextNode(name));
+                li.innerHTML = "<a href='#'>" + name + "</a>";
                 ul.appendChild(li);
-                //document.querySelector("#channels").innerHTML += (name + "\n");
             }
 
             const data = new FormData();
             data.append('name',name);
-
+            data.append('purpose',purpose);
             req.send(data);
             return false;
         }

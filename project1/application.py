@@ -161,7 +161,7 @@ def submitReview():
 @app.route('/api/<string:isbn>')
 def api(isbn):
     key = os.getenv("key")
-    res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key":key, "isbns": "9781632168146"})
+    res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key":key, "isbns": str(isbn)})
     res = res.json()
     isbn = str(isbn)
     print(isbn)

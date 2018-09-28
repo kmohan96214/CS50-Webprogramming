@@ -8,6 +8,7 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 socketio = SocketIO(app)
 
 channels = {}
+users = {}
 
 @app.route("/")
 def index():       
@@ -20,10 +21,15 @@ def chatrooms():
 @app.route("/create",methods=['POST'])
 def create():
     name = request.form.get('name')
-    channels[name] = name
+    purpose = request.form.get('purpose')
+    channels[name] = (purpose,{})
     return jsonify(channels)
 
 @app.route("/channelsList")
 def channelsList():
     print(channels)
     return jsonify(channels)
+
+@app.route("/channel/<string:name>")
+def channel():
+    return render_template('channel.html',chats=channels[name])
