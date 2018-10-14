@@ -1,0 +1,119 @@
+<html>
+<head>
+<title>chatroom</title>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+<link rel="stylesheet" href= "{{ url_for('static' , filename='styles.css') }}" type="text/css">
+<!--link rel="stylesheet" href= "styles.css" type="text/css"-->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+<script>
+    if(!localStorage.getItem('displayname'))
+      window.location = "{{ url_for('index') }}";
+
+document.addEventListener('DOMContentLoaded' , () => {
+    var socket = io.connect(location.protocol+"//"+document.domain+":"+location.port);
+    
+    document.onload
+    socket.on("connect" , ()=>{
+        document.querySelector("#send").onclick = () =>{
+            var msg =  document.querySelector("#msg").value;
+            var name = localStorage.getItem('displayname');
+            var ch = document.querySelector('#chn').value;
+            socket.emit("send message",{ 'message' : msg , 'name' : name ,'ch' : ch });
+        }
+    });
+
+    socket.on("all msgs", data => {
+          var newm = data;
+          var list = document.querySelector('#chats');
+          list.innerHTML += "<li class='left clearfix'><span class='chat-img1 pull-left'><img src='https://i.stack.imgur.com/l60Hf.png' alt='User Avatar' class='img-circle'></span><div class='chat-body1 clearfix'><p>" + newm +"</p><div class='chat_time pull-right'>" + localStorage.getItem('displayname') + "</div></div></li>";    
+    });
+
+    document.addEventListener('DOMContentLoaded' , () => {
+      document.querySelector('#logout').addEventListener("click", () => {
+          localStorage.clear();
+          window.location = "{{ url_for('index') }}";
+      });
+      
+  });
+});
+</script>
+</head>
+
+<body>
+<script src="https://use.fontawesome.com/45e03a14ce.js"></script>
+<div class="main_section">
+   <div class="container">
+      <div class="chat_container">
+         <div class="col-12 chat_sidebar">
+    	 <div class="row">
+            <div id="custom-search-input">
+               <div class="input-group col-md-12">
+                  <input type="text" id="chn" class=" search-query form-control" value={{ ch }} placeholder="Conversation" />
+                  <button class="btn btn-danger" type="button">
+                  <span class=" glyphicon glyphicon-search"></span>
+                  </button>
+               </div>
+            </div>            
+         <div class="col-12 message_section">
+		 <div class="row">
+		 <div class="new_message_head">
+		 <div class="pull-left"><button><i class="fa fa-plus-square-o" aria-hidden="true"></i> New Message</button></div><div class="pull-right"><div class="dropdown">
+  <button class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <i class="fa fa-cogs" aria-hidden="true"></i>  Setting
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+    <li></li>
+    <li><a href="#"><button>Profile</button></a></li>
+    <li><a href="#"><button id="logout">Logout</button></a></li>
+  </ul>
+</div>
+</div>
+
+
+
+		 </div>
+		 <div class="chat_area">
+		      <ul id="chats" class="list-unstyled">
+            {% if chats %}
+              {% for i,j in chats.items() %}
+				     <li class="left clearfix">
+                <span class="chat-img1 pull-left">
+                <img src="https://i.stack.imgur.com/l60Hf.png" alt="User Avatar" class="img-circle">
+                </span>
+                <div class="chat-body1 clearfix">
+                <p>{{ j }}</p>
+						    <div class="chat_time pull-right">{{ i }}</div>
+                </div>
+                </li>
+                <!--li class="left clearfix admin_chat">
+                <span class="chat-img1 pull-right">
+                <img src="https://i.stack.imgur.com/l60Hf.png" alt="User Avatar" class="img-circle">
+                </span>
+                <div class="chat-body1 clearfix">
+                <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia.</p>
+    					  <div class="chat_time pull-left">09:40PM</div>
+                </div>
+                </li-->
+                {% endfor %}
+              {% endif %}
+          </ul>
+     </div>
+
+
+     <!--chat_area-->
+      <div class="message_write">
+    	 <textarea id="msg" class="form-control" placeholder="type a message"></textarea>
+		 <div class="clearfix"></div>
+      <button id="send" class="pull-right btn btn-success">Send</button>
+		 </div>
+		 </div>
+         </div> 
+      </div>
+   </div>
+</div>
+</body>
+</html>
