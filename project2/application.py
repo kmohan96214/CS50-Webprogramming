@@ -23,7 +23,7 @@ def chatrooms():
 def create():
     name = request.form.get('name')
     purpose = request.form.get('purpose')
-    channels[name] = [purpose,{}]
+    channels[name] = [purpose,[]]
     chnames[name]=1
     return jsonify(chnames)
 
@@ -41,5 +41,5 @@ def message(data):
     dname = data['name']
     msg = data['message']
     ch = data['ch']
-    channels[ch][1][dname] = msg
-    emit("all msgs",msg,broadcast=True)
+    channels[ch][1].append( [dname,msg] ) 
+    emit("all msgs",{'msg':msg,'name':dname},broadcast=True)

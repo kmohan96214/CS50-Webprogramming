@@ -1,3 +1,4 @@
+<!DOCTYPE HTML>
 <html>
 <head>
 <title>chatroom</title>
@@ -26,9 +27,10 @@ document.addEventListener('DOMContentLoaded' , () => {
     });
 
     socket.on("all msgs", data => {
-          var newm = data;
+          
           var list = document.querySelector('#chats');
-          list.innerHTML += "<li class='left clearfix'><span class='chat-img1 pull-left'><img src='https://i.stack.imgur.com/l60Hf.png' alt='User Avatar' class='img-circle'></span><div class='chat-body1 clearfix'><p>" + newm +"</p><div class='chat_time pull-right'>" + localStorage.getItem('displayname') + "</div></div></li>";    
+          list.innerHTML += "<li class='left clearfix'><span class='chat-img1 pull-left'><img src='https://i.stack.imgur.com/l60Hf.png' alt='User Avatar' class='img-circle'></span><div class='chat-body1 clearfix'><p>" + data.msg +"</p><div class='chat_time pull-right'>" + data.name + "</div></div></li>";    
+          document.querySelector("#msg").value = '';
     });
 
     document.addEventListener('DOMContentLoaded' , () => {
@@ -79,7 +81,7 @@ document.addEventListener('DOMContentLoaded' , () => {
 		 <div class="chat_area">
 		      <ul id="chats" class="list-unstyled">
             {% if chats %}
-              {% for i,j in chats.items() %}
+              {% for i,j in chats %}
 				     <li class="left clearfix">
                 <span class="chat-img1 pull-left">
                 <img src="https://i.stack.imgur.com/l60Hf.png" alt="User Avatar" class="img-circle">
