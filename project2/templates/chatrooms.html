@@ -20,13 +20,15 @@
 
             req.onload = () =>{
                 //iterate over the list of channels
-                const data = JSON.parse(req.responseText);
-                for(var i in data)
+                const d = JSON.parse(req.responseText);
+                for(var i in d)
                 {
+                    console.log(i);
                     var ul = document.querySelector("#channel");
                     var li = document.createElement("li");
                     li.setAttribute('class','list-group-item list-group-item-dark');
-                    var s = " <a href= '{{ url_for('channel',name="+ i + ")}}'>"+ i +"</a> ";
+                    var urll = "{{ url_for('channel', name='#id#') }}"
+                    var s = "<a href=" + urll.replace('%23id%23',i) + ">" + i + "</a>";
                     li.innerHTML = s;
                     ul.appendChild(li);
                 }
@@ -51,7 +53,9 @@
                 var li = document.createElement("li");
                 const data = JSON.parse(req.responseText);
                 li.setAttribute('class','list-group-item list-group-item-dark');
-                li.innerHTML = "  <a href= '{{ url_for('channel',name=name) }}' >"+ name +"</a>    ";
+                var urll = "{{ url_for('channel', name='#id#') }}"
+                var s = "<a href=" + urll.replace('%23id%23',name) + ">" + name + "</a>";
+                li.innerHTML = s;
                 ul.appendChild(li);
             }
 

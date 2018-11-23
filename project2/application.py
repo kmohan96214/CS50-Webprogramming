@@ -29,7 +29,7 @@ def create():
 
 @app.route("/channelsList")
 def channelsList():
-    print(channels)
+    print(chnames)
     return jsonify(chnames)
 
 @app.route("/channel/<string:name>")
